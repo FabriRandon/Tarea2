@@ -29,7 +29,6 @@ robotOn(R, X, Y, T + 1, 3) :- exec(R, rotateRight, T), robotOn(R, X, Y, T, D), t
 robotOn(R, X, Y, T + 1, 1) :- exec(R, rotateRight, T), robotOn(R, X, Y, T, D), time(T + 1), D = 3.
 robotOn(R, X, Y, T + 1, 2) :- exec(R, rotateRight, T), robotOn(R, X, Y, T, D), time(T + 1), D = 4.
 
-
 % La caja pasa a estar en la posición del robot, levantada y este último mantiene su localización. Se indica que hay una caja encima del robot.
 3{boxOn(B, X - 1, Y, 1, T + 1); robotOn(R, X - 1, Y, T + 1, D); boxOnRobot(B, R, T + 1)}3 :- robotLiftBox(R, B, T), robotOn(R, X - 1, Y, T, D), time(T + 1), boxOn(B, X, Y, Z, T), robot(R), Z = 0. 
 3{boxOn(B, X + 1, Y, 1, T + 1); robotOn(R, X + 1, Y, T + 1, D); boxOnRobot(B, R, T + 1)}3 :- robotLiftBox(R, B, T), robotOn(R, X + 1, Y, T, D), time(T + 1), boxOn(B, X, Y, Z, T), robot(R), Z = 0.
@@ -45,14 +44,18 @@ boxOn(B, X, Y, 1, T) :- robotOn(R, X, Y, T, D), boxOnRobot(B, R, T), time(T).
 boxOnRobot(B, R, T + 1) :- boxOnRobot(B, R, T), time(T + 1).
 
 % Un robot es capaz de levantar una caja, únicamente si está adyacente a él. Se define que es que esté adyacente.
-boxAdjacentToRobot(B, R, T) :- robotOn(R, X - 1, Y, T, D), boxOn(B, X, Y, Z, T), robot(R), time(T), box(B), Z = 0.
-boxAdjacentToRobot(B, R, 0) :- robotOn(R, X - 1, Y, 0, D), boxOn(B, X, Y, Z, 0), robot(R), box(B), Z = 0.
-boxAdjacentToRobot(B, R, T) :- robotOn(R, X + 1, Y, T, D), boxOn(B, X, Y, Z, T), robot(R), time(T), box(B), Z = 0.
-boxAdjacentToRobot(B, R, 0) :- robotOn(R, X + 1, Y, 0, D), boxOn(B, X, Y, Z, 0), robot(R), box(B), Z = 0.
-boxAdjacentToRobot(B, R, T) :- robotOn(R, X, Y - 1, T, D), boxOn(B, X, Y, Z, T), robot(R), time(T), box(B), Z = 0.
-boxAdjacentToRobot(B, R, 0) :- robotOn(R, X, Y - 1, 0, D), boxOn(B, X, Y, Z, 0), robot(R), box(B), Z = 0.
-boxAdjacentToRobot(B, R, T) :- robotOn(R, X, Y + 1, T, D), boxOn(B, X, Y, Z, T), robot(R), time(T), box(B), Z = 0.
-boxAdjacentToRobot(B, R, 0) :- robotOn(R, X, Y + 1, 0, D), boxOn(B, X, Y, Z, 0), robot(R), box(B), Z = 0.
+% Caja a la derecha
+boxAdjacentToRobot(B, R, T) :- robotOn(R, X - 1, Y, T, D), boxOn(B, X, Y, Z, T), robot(R), time(T), box(B), Z = 0, D = 4.
+boxAdjacentToRobot(B, R, 0) :- robotOn(R, X - 1, Y, 0, D), boxOn(B, X, Y, Z, 0), robot(R), box(B), Z = 0, D = 4.
+% Caja a la izquierda
+boxAdjacentToRobot(B, R, T) :- robotOn(R, X + 1, Y, T, D), boxOn(B, X, Y, Z, T), robot(R), time(T), box(B), Z = 0, D = 3.
+boxAdjacentToRobot(B, R, 0) :- robotOn(R, X + 1, Y, 0, D), boxOn(B, X, Y, Z, 0), robot(R), box(B), Z = 0, D = 3.
+% Caja abajo
+boxAdjacentToRobot(B, R, T) :- robotOn(R, X, Y - 1, T, D), boxOn(B, X, Y, Z, T), robot(R), time(T), box(B), Z = 0, D = 2.
+boxAdjacentToRobot(B, R, 0) :- robotOn(R, X, Y - 1, 0, D), boxOn(B, X, Y, Z, 0), robot(R), box(B), Z = 0, D = 2.
+% Caja arriba
+boxAdjacentToRobot(B, R, T) :- robotOn(R, X, Y + 1, T, D), boxOn(B, X, Y, Z, T), robot(R), time(T), box(B), Z = 0, D = 1.
+boxAdjacentToRobot(B, R, 0) :- robotOn(R, X, Y + 1, 0, D), boxOn(B, X, Y, Z, 0), robot(R), box(B), Z = 0, D = 1.
 
 % Cantidad de cajas adyacentes
 boxesAdjactentToRobot(R, T, N) :- robot(R), N = #count{B : boxAdjacentToRobot(B, R, T)}, time(T).
@@ -72,6 +75,12 @@ boxesAdjactentToRobot(R, 0, N) :- robot(R), N = #count{B : boxAdjacentToRobot(B,
 % :- robotLiftBox(R, B, T), not robotOn(R, X, Y, T, D), boxOn(B, X, Y + 1, Z, T), D = 2, Z = 0.
 % :- robotLiftBox(R, B, T), not robotOn(R, X, Y, T, D), boxOn(B, X - 1, Y, Z, T), D = 3, Z = 0.
 % :- robotLiftBox(R, B, T), not robotOn(R, X, Y, T, D), boxOn(B, X + 1, Y, Z, T), D = 4, Z = 0.
+
+% Si la caja esta adyacente, el robot debe girar hasta recogerla
+% robotOn(R, X, Y, T + 1, 3) :- exec(R, rotateLeft, T), robotOn(R, X, Y, T, D), time(T + 1), D = 1, boxAdjacentToRobot(B, R, T), not boxOnRobot(B, R, T).
+% robotOn(R, X, Y, T + 1, 4) :- exec(R, rotateLeft, T), robotOn(R, X, Y, T, D), time(T + 1), D = 2, boxAdjacentToRobot(B, R, T), not boxOnRobot(B, R, T).
+% robotOn(R, X, Y, T + 1, 2) :- exec(R, rotateLeft, T), robotOn(R, X, Y, T, D), time(T + 1), D = 3, boxAdjacentToRobot(B, R, T), not boxOnRobot(B, R, T).
+% robotOn(R, X, Y, T + 1, 1) :- exec(R, rotateLeft, T), robotOn(R, X, Y, T, D), time(T + 1), D = 4, boxAdjacentToRobot(B, R, T), not boxOnRobot(B, R, T).
 
 % Un robot no puede llevar más de una caja al mismo tiempo
 :- robotLiftBox(R1, B, T), robotLiftBox(R2, B, T), R1 != R2. 
