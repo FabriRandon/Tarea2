@@ -43,7 +43,7 @@ boxOn(B, X, Y, 0, T + 1) :- boxOn(B, X, Y, Z, T), Z = 0, not boxPickedUp(B, T + 
 boxOn(B, X, Y, 1, T) :- robotOn(R, X, Y, T, D), boxOnRobot(B, R, T), time(T).
 boxOnRobot(B, R, T + 1) :- boxOnRobot(B, R, T), time(T + 1).
 
-% Un robot es capaz de levantar una caja, únicamente si está adyacente a él. Se define que es que esté adyacente.
+% Un robot es capaz de levantar una caja, únicamente si está adyacente a él y además si está mirándola. Se define que es que esté adyacente.
 % Caja a la derecha
 boxAdjacentToRobot(B, R, T) :- robotOn(R, X - 1, Y, T, D), boxOn(B, X, Y, Z, T), robot(R), time(T), box(B), Z = 0, D = 4.
 boxAdjacentToRobot(B, R, 0) :- robotOn(R, X - 1, Y, 0, D), boxOn(B, X, Y, Z, 0), robot(R), box(B), Z = 0, D = 4.
@@ -93,8 +93,8 @@ boxesAdjactentToRobot(R, 0, N) :- robot(R), N = #count{B : boxAdjacentToRobot(B,
 :- robotOn(R, X, Y, T, D), not rangeY(Y).
 :- boxOn(B, X, Y, Z, T), not rangeX(X).
 :- boxOn(B, X, Y, Z, T), not rangeY(Y).
-% :- robotOn(R, X, Y, T, D), obstacle(X, Y).
-% :- boxOn(B, X, Y, Z, T), obstacle(X, Y).
+:- robotOn(R, X, Y, T, D), obstacle(X, Y).
+:- boxOn(B, X, Y, Z, T), obstacle(X, Y).
 
 % No puede haber más de un robot en la misma casilla y más de una caja en la misma casilla.
 :- robotOn(R1, X, Y, T, D), robotOn(R2, X, Y, T, D), R1 != R2.
@@ -123,7 +123,7 @@ at_goal(B, T) :- boxOn(B, X, Y, Z, T), goal(X, Y).
 #show time/1.
 #show robotOn/5.
 #show boxOn/5.
-% #show obstacle/2.
+#show obstacle/2.
 #show rangeX/1.
 #show rangeY/1.
 #show goal/2.
