@@ -76,6 +76,9 @@ boxesAdjactentToRobot(R, 0, N) :- robot(R), N = #count{B : boxAdjacentToRobot(B,
 % Una caja puede ser llevada por un único robot.
 :- boxOnRobot(B1, R, T), boxOnRobot(B2, R, T), B1 != B2.
 
+% Se evitan acciones innecesarias si el robot llega a la meta.
+% :- exec(R, A, T), goal(X,Y), robotOn(R,X,Y,T,D,E), A != wait.
+
 % Un robot no estar encima por un obstáculo, o afuera del mapa, al igual que la caja.
 :- robotOn(R, X, Y, T, D, E), not rangeX(X).
 :- robotOn(R, X, Y, T, D, E), not rangeY(Y).
