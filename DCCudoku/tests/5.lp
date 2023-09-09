@@ -2,7 +2,7 @@
 
 #const n=8.
 
-grid(0..n-1,0..-1).
+grid(0..n-1,0..n-1).
 
 % Figura 1
 % 3 1 8
